@@ -52,10 +52,10 @@ func (g *generator) generateFile(file *descriptor.FileDescriptorProto) (*plugin.
 		return nil, errors.Annotatef(err, "rendering template for %s", file.GetName())
 	}
 
-	base := filepath.Base(file.GetName())
-	base = base[:len(base)-len(filepath.Ext(base))]
+	name := file.GetName()
+	name = name[:len(name)-len(filepath.Ext(name))]
 	return &plugin.CodeGeneratorResponse_File{
-		Name:    proto.String(fmt.Sprintf("%s.js", base)),
+		Name:    proto.String(fmt.Sprintf("%s.king.js", name)),
 		Content: proto.String(buffer.String()),
 	}, nil
 }

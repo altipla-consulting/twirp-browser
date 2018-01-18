@@ -1,0 +1,21 @@
+
+syntax = "proto3";
+
+package king.test.example;
+
+import "test/common/common.proto";
+
+service ContactMessagesService {
+  rpc Foo(FooRequest) returns (common.Empty) {}
+  rpc Bar(BarRequest) returns (common.Empty) {}
+}
+
+message FooRequest {
+  string name = 1;
+  string email = 2;
+}
+
+message BarRequest {
+  int32 increments = 1;
+  bool trying = 2;
+}
