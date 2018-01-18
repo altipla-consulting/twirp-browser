@@ -1,12 +1,22 @@
-hash: befbd3c1ad579e66ab6567e4610f75e4e4518fd4396b032c734a4e37fb642d97
-updated: 2018-01-18T03:25:59.179009977Z
+hash: a89588e837620032ea4db8f5b30b0922fead2ec89c01b5697a427fa092837030
+updated: 2018-01-18T20:06:55.924336926Z
 imports:
+- name: github.com/altipla-consulting/collections
+  version: 1b3380bd54a3b7d582fbc542c90395cff50a224e
 - name: github.com/golang/protobuf
   version: 1e59b77b52bf8e4b449a57e6f79f21226d571845
   subpackages:
+  - jsonpb
   - proto
   - protoc-gen-go/descriptor
   - protoc-gen-go/plugin
+  - ptypes/struct
 - name: github.com/juju/errors
   version: c7d06af17c68cd34c835053720b21f6549d9b0ee
+- name: github.com/julienschmidt/httprouter
+  version: 8c199fb6259ffc1af525cc3ad52ee60ba8359669
+- name: golang.org/x/net
+  version: 5ccada7d0a7ba9aeb5d3aca8d3501b4c2a509fec
+  subpackages:
+  - context
 testImports: []
