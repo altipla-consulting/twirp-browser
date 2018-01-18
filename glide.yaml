@@ -1,0 +1,8 @@
+package: .
+import:
+- package: github.com/golang/protobuf
+  subpackages:
+  - proto
+  - protoc-gen-go/descriptor
+  - protoc-gen-go/plugin
+- package: github.com/juju/errors

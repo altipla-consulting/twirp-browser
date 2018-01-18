@@ -1,0 +1,12 @@
+hash: befbd3c1ad579e66ab6567e4610f75e4e4518fd4396b032c734a4e37fb642d97
+updated: 2018-01-18T03:25:59.179009977Z
+imports:
+- name: github.com/golang/protobuf
+  version: 1e59b77b52bf8e4b449a57e6f79f21226d571845
+  subpackages:
+  - proto
+  - protoc-gen-go/descriptor
+  - protoc-gen-go/plugin
+- name: github.com/juju/errors
+  version: c7d06af17c68cd34c835053720b21f6549d9b0ee
+testImports: []
