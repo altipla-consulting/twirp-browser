@@ -46,7 +46,6 @@ func (g *generator) generateFile(file *descriptor.FileDescriptorProto) (*plugin.
 		proto:          file,
 		Version:        Version,
 		SourceFilename: file.GetName(),
-		Package:        file.GetPackage(),
 	}
 	if err = tmpl.Execute(buffer, data); err != nil {
 		return nil, errors.Annotatef(err, "rendering template for %s", file.GetName())

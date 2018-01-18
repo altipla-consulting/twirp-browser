@@ -8,7 +8,6 @@ type templateData struct {
 	proto *descriptor.FileDescriptorProto
 
 	Version        string
-	Package        string
 	SourceFilename string
 }
 
@@ -27,11 +26,6 @@ func (p *templateData) Services() []*templateService {
 
 func (p *templateData) Quote() string {
 	return "`"
-}
-
-type templateMessage struct {
-	proto *descriptor.DescriptorProto
-	pkg   string
 }
 
 type templateService struct {
