@@ -1,30 +1,27 @@
 
 syntax = "proto3";
 
-package twitch.twirp.example;
+package contact_messages;
 
-// A Haberdasher makes hats for clients.
-service Haberdasher {
-  // MakeHat produces a hat of mysterious, randomly-selected color!
-  rpc MakeHat(Size) returns (Hat) {}
-  rpc MakeHat2(Size) returns (Hat) {}
+service ContactMessagesService {
+  rpc SendMessage(SendMessageRequest) returns (Empty) {}
+  rpc SendCallMe(SendCallMeRequest) returns (Empty) {}
 }
 
-// A Hat is a piece of headwear made by a Haberdasher.
-message Hat {
-  // The size of a hat should always be in inches.
-  int32 size = 1;
-
-  // The color of a hat will never be 'invisible', but other than
-  // that, anything is fair game.
-  string color = 2;
-
-  // The name of a hat is it's type. Like, 'bowler', or something.
-  string name = 3;
+message SendMessageRequest {
+  string name = 1;
+  string email = 2;
+  string phone = 3;
+  string message = 4;
+  string lang = 5;
+  string site = 6;
 }
 
-// Size is passed when requesting a new hat to be made. It's always
-// measured in inches.
-message Size {
-  int32 inches = 1;
+message SendCallMeRequest {
+  string name = 1;
+  string phone = 2;
+  string message = 3;
+  string site = 4;
 }
+
+message Empty {}

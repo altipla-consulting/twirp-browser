@@ -12,7 +12,7 @@ import (
 	"github.com/juju/errors"
 )
 
-// Version is the release version of the browser twirp generator
+// Version is the release version of this generator
 const Version = "1.0.0"
 
 func main() {

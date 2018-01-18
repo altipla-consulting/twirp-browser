@@ -55,7 +55,7 @@ func (g *generator) generateFile(file *descriptor.FileDescriptorProto) (*plugin.
 	base := filepath.Base(file.GetName())
 	base = base[:len(base)-len(filepath.Ext(base))]
 	return &plugin.CodeGeneratorResponse_File{
-		Name:    proto.String(fmt.Sprintf("%s_twirp.js", base)),
+		Name:    proto.String(fmt.Sprintf("%s.js", base)),
 		Content: proto.String(buffer.String()),
 	}, nil
 }
