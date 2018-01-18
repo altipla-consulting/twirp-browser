@@ -3,4 +3,6 @@ syntax = "proto3";
 
 package king.test.common;
 
+option go_package = "github.com/altipla-consulting/king/test/common";
+
 message Empty {}

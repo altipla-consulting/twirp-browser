@@ -3,6 +3,8 @@ syntax = "proto3";
 
 package king.test.example;
 
+option go_package = "github.com/altipla-consulting/king/test/example";
+
 import "test/common/common.proto";
 
 service ContactMessagesService {
