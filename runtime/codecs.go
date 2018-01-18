@@ -1,64 +1,71 @@
 package runtime
 
 import (
+	"io"
 	"io/ioutil"
-	"net/http"
 
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/proto"
 	"github.com/juju/errors"
 )
 
+func CodecFromType(codecType string) Codec {
+	switch codecType {
+	case "application/json":
+		return new(CodecJSON)
+	case "application/protobuf":
+		return new(CodecPB)
+	}
+
+	return new(CodecJSON)
+}
+
 type Codec interface {
 	ContentType() string
-	Decode(data proto.Message) error
-	Encode(data proto.Message) error
+	Decode(r io.Reader, data proto.Message) error
+	Encode(w io.Writer, data proto.Message) error
 }
 
 type CodecJSON struct {
-	w http.ResponseWriter
-	r *http.Request
 }
 
 func (codec *CodecJSON) ContentType() string {
 	return "application/json; charset=utf-8"
 }
 
-func (codec *CodecJSON) Decode(data proto.Message) error {
+func (codec *CodecJSON) Decode(r io.Reader, data proto.Message) error {
 	m := jsonpb.Unmarshaler{}
-	return errors.Trace(m.Unmarshal(codec.r.Body, data))
+	return errors.Trace(m.Unmarshal(r, data))
 }
 
-func (codec *CodecJSON) Encode(data proto.Message) error {
+func (codec *CodecJSON) Encode(w io.Writer, data proto.Message) error {
 	m := jsonpb.Marshaler{
 		EmitDefaults: true,
 	}
-	return errors.Trace(m.Marshal(codec.w, data))
+	return errors.Trace(m.Marshal(w, data))
 }
 
 type CodecPB struct {
-	w http.ResponseWriter
-	r *http.Request
 }
 
 func (codec *CodecPB) ContentType() string {
 	return "application/protobuf"
 }
 
-func (codec *CodecPB) Decode(data proto.Message) error {
-	content, err := ioutil.ReadAll(codec.r.Body)
+func (codec *CodecPB) Decode(r io.Reader, data proto.Message) error {
+	content, err := ioutil.ReadAll(r)
 	if err != nil {
 		return errors.Trace(err)
 	}
 	return errors.Trace(proto.Unmarshal(content, data))
 }
 
-func (codec *CodecPB) Encode(data proto.Message) error {
+func (codec *CodecPB) Encode(w io.Writer, data proto.Message) error {
 	content, err := proto.Marshal(data)
 	if err != nil {
 		return errors.Trace(err)
 	}
-	if _, err := codec.w.Write(content); err != nil {
+	if _, err := w.Write(content); err != nil {
 		return errors.Trace(err)
 	}
 	return nil

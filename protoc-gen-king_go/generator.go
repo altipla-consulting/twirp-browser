@@ -14,8 +14,6 @@ import (
 	"github.com/golang/protobuf/protoc-gen-go/descriptor"
 	plugin "github.com/golang/protobuf/protoc-gen-go/plugin"
 	"github.com/juju/errors"
-
-	_ "github.com/altipla-consulting/king/runtime/httprouter"
 )
 
 type generator struct {
@@ -101,7 +99,7 @@ func (g *generator) generateFile(file *descriptor.FileDescriptorProto) (*plugin.
 	}
 	if methods {
 		data.Imports = append(data.Imports, strconv.Quote("golang.org/x/net/context"))
-		data.Imports = append(data.Imports, strconv.Quote("github.com/juju/errors"))
+		data.Imports = append(data.Imports, strconv.Quote("github.com/golang/protobuf/proto"))
 		data.Imports = append(data.Imports, strconv.Quote("github.com/altipla-consulting/king/runtime"))
 	}
 

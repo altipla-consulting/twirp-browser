@@ -3,7 +3,7 @@ package example
 import (
 	"github.com/altipla-consulting/king/runtime"
 	common "github.com/altipla-consulting/king/test/common"
-	"github.com/juju/errors"
+	"github.com/golang/protobuf/proto"
 	"golang.org/x/net/context"
 )
 
@@ -21,56 +21,18 @@ func RegisterContactMessagesServiceServer(server ContactMessagesServiceServer) {
 		Methods: []*runtime.Method{
 
 			{
-				Name: "Foo",
-				Handler: func(ctx context.Context, inCodec, outCodec runtime.Codec, inHook, outHook runtime.Hook) error {
-					in := new(FooRequest)
-					if err := inCodec.Decode(in); err != nil {
-						return errors.Trace(err)
-					}
-					if err := inHook(in); err != nil {
-						return errors.Trace(err)
-					}
-
-					out, err := server.(*clientImplContactMessagesService).Foo(ctx, in)
-					if err != nil {
-						return errors.Trace(err)
-					}
-
-					if err := outHook(out); err != nil {
-						return errors.Trace(err)
-					}
-					if err := outCodec.Encode(out); err != nil {
-						return errors.Trace(err)
-					}
-
-					return nil
+				Name:  "Foo",
+				Input: func() proto.Message { return new(FooRequest) },
+				Handler: func(ctx context.Context, in proto.Message) (proto.Message, error) {
+					return server.(*clientImplContactMessagesService).Foo(ctx, in.(*FooRequest))
 				},
 			},
 
 			{
-				Name: "Bar",
-				Handler: func(ctx context.Context, inCodec, outCodec runtime.Codec, inHook, outHook runtime.Hook) error {
-					in := new(BarRequest)
-					if err := inCodec.Decode(in); err != nil {
-						return errors.Trace(err)
-					}
-					if err := inHook(in); err != nil {
-						return errors.Trace(err)
-					}
-
-					out, err := server.(*clientImplContactMessagesService).Bar(ctx, in)
-					if err != nil {
-						return errors.Trace(err)
-					}
-
-					if err := outHook(out); err != nil {
-						return errors.Trace(err)
-					}
-					if err := outCodec.Encode(out); err != nil {
-						return errors.Trace(err)
-					}
-
-					return nil
+				Name:  "Bar",
+				Input: func() proto.Message { return new(BarRequest) },
+				Handler: func(ctx context.Context, in proto.Message) (proto.Message, error) {
+					return server.(*clientImplContactMessagesService).Bar(ctx, in.(*BarRequest))
 				},
 			},
 		},
@@ -94,7 +56,7 @@ func NewContactMessagesServiceClient(server string) ContactMessagesServiceClient
 func (impl *clientImplContactMessagesService) Foo(ctx context.Context, in *FooRequest) (out *common.Empty, err error) {
 	out = new(common.Empty)
 	if err := runtime.ClientCall(ctx, impl.server, "king.test.example.ContactMessagesService", "Foo", in, out); err != nil {
-		return nil, errors.Trace(err)
+		return nil, err
 	}
 
 	return out, nil
@@ -103,7 +65,7 @@ func (impl *clientImplContactMessagesService) Foo(ctx context.Context, in *FooRe
 func (impl *clientImplContactMessagesService) Bar(ctx context.Context, in *BarRequest) (out *common.Empty, err error) {
 	out = new(common.Empty)
 	if err := runtime.ClientCall(ctx, impl.server, "king.test.example.ContactMessagesService", "Bar", in, out); err != nil {
-		return nil, errors.Trace(err)
+		return nil, err
 	}
 
 	return out, nil

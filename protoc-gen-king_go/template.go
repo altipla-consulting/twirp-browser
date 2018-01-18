@@ -115,28 +115,9 @@ func Register{{.ServerName}}(server {{.ServerName}}) {
 			{{range .Methods}}
 				{
 					Name: "{{.MethodName}}",
-					Handler: func(ctx context.Context, inCodec, outCodec runtime.Codec, inHook, outHook runtime.Hook) error {
-						in := new({{.InType}})
-						if err := inCodec.Decode(in); err != nil {
-						  return errors.Trace(err)
-						}
-						if err := inHook(in); err != nil {
-						  return errors.Trace(err)
-						}
-
-						out, err := server.(*{{$implName}}).{{.MethodName}}(ctx, in)
-						if err != nil {
-							return errors.Trace(err)
-						}
-
-						if err := outHook(out); err != nil {
-						  return errors.Trace(err)
-						}
-						if err := outCodec.Encode(out); err != nil {
-						  return errors.Trace(err)
-						}
-
-						return nil
+					Input: func() proto.Message { return new({{.InType}}) },
+					Handler: func(ctx context.Context, in proto.Message) (proto.Message, error) {
+						return server.(*{{$implName}}).{{.MethodName}}(ctx, in.(*{{.InType}}))
 					},
 				},
 			{{end}}
@@ -162,7 +143,7 @@ func New{{.ClientName}}(server string) {{.ClientName}} {
 func (impl *{{$implName}}) {{.MethodName}}(ctx context.Context, in *{{.InType}}) (out *{{.OutType}}, err error) {
 	out = new({{.OutType}})
 	if err := runtime.ClientCall(ctx, impl.server, "{{$serviceName}}", "{{.MethodName}}", in, out); err != nil {
-		return nil, errors.Trace(err)
+		return nil, err
 	}
 
 	return out, nil

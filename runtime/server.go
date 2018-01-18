@@ -1,6 +1,7 @@
 package runtime
 
 import (
+	"github.com/golang/protobuf/proto"
 	"golang.org/x/net/context"
 )
 
@@ -13,5 +14,6 @@ type Service struct {
 
 type Method struct {
 	Name    string
-	Handler func(ctx context.Context, inCodec, outCodec Codec, inHook, outHook Hook) error
+	Input   func() proto.Message
+	Handler func(ctx context.Context, in proto.Message) (proto.Message, error)
 }
