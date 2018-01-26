@@ -46,6 +46,10 @@ func (svc *templateService) ServerName() string {
 	return svc.proto.GetName() + "Server"
 }
 
+func (svc *templateService) Name() string {
+	return svc.proto.GetName()
+}
+
 func (svc *templateService) ClientImplName() string {
 	return "clientImpl" + svc.proto.GetName()
 }
@@ -108,7 +112,7 @@ type {{.ServerName}} interface {
 	{{.MethodName}}(ctx context.Context, in *{{.InType}}) (out *{{.OutType}}, err error){{end}}
 }
 
-func Register{{.ServerName}}(server {{.ServerName}}) {
+func Register{{.Name}}(server {{.ServerName}}) {
 	serviceDef := &runtime.Service{
 		Name: "{{.ServiceName}}",
 		Methods: []*runtime.Method{
