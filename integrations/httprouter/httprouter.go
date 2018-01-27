@@ -6,7 +6,6 @@ import (
 
 	"github.com/altipla-consulting/king/peer"
 	"github.com/altipla-consulting/king/runtime"
-	"github.com/juju/errors"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -20,35 +19,31 @@ func RegisterServices(r *httprouter.Router) {
 
 func buildHandler(method *runtime.Method) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		if err := safeHandler(method, w, r); err != nil {
+		inCodec := runtime.CodecFromType(r.Header.Get("Content-Type"))
+		outCodec := runtime.CodecFromType(r.Header.Get("Accept"))
+
+		w.Header().Set("Content-Type", outCodec.ContentType())
+
+		r = r.WithContext(peer.RequestWithContext(r))
+
+		in := method.Input()
+		if err := inCodec.Decode(r.Body, in); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		out, err := method.Handler(r.Context(), in)
+		if err != nil {
 			w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+
+		if err := outCodec.Encode(w, out); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		return
 	}
-}
-
-func safeHandler(method *runtime.Method, w http.ResponseWriter, r *http.Request) error {
-	inCodec := runtime.CodecFromType(r.Header.Get("Content-Type"))
-	outCodec := runtime.CodecFromType(r.Header.Get("Accept"))
-
-	w.Header().Set("Content-Type", outCodec.ContentType())
-
-	r = r.WithContext(peer.RequestWithContext(r))
-
-	in := method.Input()
-	if err := inCodec.Decode(r.Body, in); err != nil {
-		return errors.Trace(err)
-	}
-
-	out, err := method.Handler(r.Context(), in)
-	if err != nil {
-		return errors.Trace(err)
-	}
-
-	if err := outCodec.Encode(w, out); err != nil {
-		return errors.Trace(err)
-	}
-
-	return nil
 }
