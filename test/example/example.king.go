@@ -1,4 +1,4 @@
-package example
+package king_example
 
 import (
 	"github.com/altipla-consulting/king/runtime"
