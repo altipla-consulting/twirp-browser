@@ -103,7 +103,8 @@ func (g *generator) generateFile(file *descriptor.FileDescriptorProto) (*plugin.
 		data.Imports = append(data.Imports, strconv.Quote("github.com/altipla-consulting/king/runtime"))
 	}
 
-	data.Package = strings.Replace(file.GetPackage(), ".", "_", -1)
+	s := strings.Split(file.GetPackage(), ".")
+	data.Package = s[len(s)-1]
 
 	data.Imports = collections.UniqueStrings(data.Imports)
 	sort.Strings(data.Imports)

@@ -1,15 +1,15 @@
 
 syntax = "proto3";
 
-package king.test.example;
+package king.example;
 
 option go_package = "github.com/altipla-consulting/king/test/example";
 
 import "test/common/common.proto";
 
 service ContactMessagesService {
-  rpc Foo(FooRequest) returns (common.Empty) {}
-  rpc Bar(BarRequest) returns (common.Empty) {}
+  rpc Foo(FooRequest) returns (king.common.Empty) {}
+  rpc Bar(BarRequest) returns (king.common.Empty) {}
 }
 
 message FooRequest {

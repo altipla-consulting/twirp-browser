@@ -27,7 +27,7 @@ class ContactMessagesServiceClient {
 		if (this.authorization) {
 			opts.headers.Authorization = this.authorization;
 		}
-		return fetch(`${this.server}/_/king.test.example.ContactMessagesService/${method}`, opts)
+		return fetch(`${this.server}/_/king.example.ContactMessagesService/${method}`, opts)
 			.then(resp => {
 				if (resp.status !== 200) {
 					let err = new Error(response.statusText);

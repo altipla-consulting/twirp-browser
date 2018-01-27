@@ -15,16 +15,16 @@ type ContactMessagesServiceServer interface {
 	Bar(ctx context.Context, in *BarRequest) (out *common.Empty, err error)
 }
 
-func RegisterContactMessagesServiceServer(server ContactMessagesServiceServer) {
+func RegisterContactMessagesService(server ContactMessagesServiceServer) {
 	serviceDef := &runtime.Service{
-		Name: "king.test.example.ContactMessagesService",
+		Name: "king.example.ContactMessagesService",
 		Methods: []*runtime.Method{
 
 			{
 				Name:  "Foo",
 				Input: func() proto.Message { return new(FooRequest) },
 				Handler: func(ctx context.Context, in proto.Message) (proto.Message, error) {
-					return server.(*clientImplContactMessagesService).Foo(ctx, in.(*FooRequest))
+					return server.Foo(ctx, in.(*FooRequest))
 				},
 			},
 
@@ -32,7 +32,7 @@ func RegisterContactMessagesServiceServer(server ContactMessagesServiceServer) {
 				Name:  "Bar",
 				Input: func() proto.Message { return new(BarRequest) },
 				Handler: func(ctx context.Context, in proto.Message) (proto.Message, error) {
-					return server.(*clientImplContactMessagesService).Bar(ctx, in.(*BarRequest))
+					return server.Bar(ctx, in.(*BarRequest))
 				},
 			},
 		},
@@ -55,7 +55,7 @@ func NewContactMessagesServiceClient(server string) ContactMessagesServiceClient
 
 func (impl *clientImplContactMessagesService) Foo(ctx context.Context, in *FooRequest) (out *common.Empty, err error) {
 	out = new(common.Empty)
-	if err := runtime.ClientCall(ctx, impl.server, "king.test.example.ContactMessagesService", "Foo", in, out); err != nil {
+	if err := runtime.ClientCall(ctx, impl.server, "king.example.ContactMessagesService", "Foo", in, out); err != nil {
 		return nil, err
 	}
 
@@ -64,7 +64,7 @@ func (impl *clientImplContactMessagesService) Foo(ctx context.Context, in *FooRe
 
 func (impl *clientImplContactMessagesService) Bar(ctx context.Context, in *BarRequest) (out *common.Empty, err error) {
 	out = new(common.Empty)
-	if err := runtime.ClientCall(ctx, impl.server, "king.test.example.ContactMessagesService", "Bar", in, out); err != nil {
+	if err := runtime.ClientCall(ctx, impl.server, "king.example.ContactMessagesService", "Bar", in, out); err != nil {
 		return nil, err
 	}
 

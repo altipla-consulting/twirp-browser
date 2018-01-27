@@ -121,7 +121,7 @@ func Register{{.Name}}(server {{.ServerName}}) {
 					Name: "{{.MethodName}}",
 					Input: func() proto.Message { return new({{.InType}}) },
 					Handler: func(ctx context.Context, in proto.Message) (proto.Message, error) {
-						return server.(*{{$implName}}).{{.MethodName}}(ctx, in.(*{{.InType}}))
+						return server.{{.MethodName}}(ctx, in.(*{{.InType}}))
 					},
 				},
 			{{end}}
