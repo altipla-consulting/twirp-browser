@@ -91,8 +91,8 @@ export default class {{.ClientName}} {
 			opts.headers.Authorization = this.authorization;
 		}
 		return fetch({{$.Quote}}${this.server}/_/{{.ServiceName}}/${method}{{$.Quote}}, opts)
-			.then(resp => {
-				if (resp.status !== 200) {
+			.then(response => {
+				if (response.status !== 200) {
 					let err = new Error(response.statusText);
 					err.response = response;
 					throw err;
