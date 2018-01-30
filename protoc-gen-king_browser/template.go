@@ -98,8 +98,8 @@ export default class {{.ClientName}} {
 					throw err;
 				}
 
-				if (hook) {
-					hook(response);
+				if (this.hook) {
+					this.hook(response);
 				}
 
 				return response.json();
