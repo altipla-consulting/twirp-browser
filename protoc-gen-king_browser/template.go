@@ -76,7 +76,7 @@ export default class {{.ClientName}} {
 	}
 	{{range .Methods}}
 	{{.MethodName}}(req) {
-		return this._doRequest('{{.MethodName}}', req || {});
+		return this._doRequest('{{.MethodName}}', req);
 	}
 	{{end}}
 	_doRequest(method, req) {
@@ -85,7 +85,7 @@ export default class {{.ClientName}} {
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify(req),
+			body: JSON.stringify(req || {}),
 		};
 		if (this.authorization) {
 			opts.headers.Authorization = this.authorization;
