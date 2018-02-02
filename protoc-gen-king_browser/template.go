@@ -76,7 +76,7 @@ export default class {{.ClientName}} {
 	}
 	{{range .Methods}}
 	{{.MethodName}}(req) {
-		return this._doRequest('{{.MethodName}}', req);
+		return this._doRequest('{{.MethodName}}', req || {});
 	}
 	{{end}}
 	_doRequest(method, req) {
