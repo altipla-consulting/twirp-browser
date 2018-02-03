@@ -30,6 +30,10 @@ func ClientCall(ctx context.Context, server, serviceName, methodName string, in,
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusOK {
+		return errors.Annotatef(errors.New("unexpected status code"), "status: %s", resp.Status)
+	}
+
 	content, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return errors.Trace(err)
