@@ -23,7 +23,7 @@ func WithLogrus() ServerOption {
 		server.errorMiddlewares = append(server.errorMiddlewares, func(appErr error) {
 			if server.debug {
 				log.WithFields(log.Fields{"err": appErr.Error()}).Error("call failed")
-				log.Println(errors.ErrorStack(appErr))
+				log.Error("Error stack:\n", errors.ErrorStack(appErr))
 			} else {
 				log.WithFields(log.Fields{"err": appErr.Error(), "stack": errors.ErrorStack(appErr)}).Error("call failed")
 			}
