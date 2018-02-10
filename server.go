@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/altipla-consulting/collections"
-
 	"github.com/altipla-consulting/king/peer"
 	"github.com/altipla-consulting/king/runtime"
 	"github.com/julienschmidt/httprouter"
@@ -16,7 +14,6 @@ type Server struct {
 	logrus           bool
 	errorMiddlewares []ErrorMiddleware
 	debug            bool
-	cors             []string
 }
 
 type ErrorMiddleware func(appErr error)
@@ -34,7 +31,6 @@ func NewServer(opts ...ServerOption) *Server {
 			for _, method := range svc.Methods {
 				path := fmt.Sprintf("/_/%s/%s", svc.Name, method.Name)
 				server.router.POST(path, buildHandler(server, method))
-				server.router.OPTIONS(path, corsHandler(server))
 			}
 		}
 	}
@@ -79,20 +75,5 @@ func buildHandler(server *Server, method *runtime.Method) httprouter.Handle {
 		}
 
 		return
-	}
-}
-
-func corsHandler(server *Server) httprouter.Handle {
-	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		origin := r.Header.Get("Origin")
-		if collections.HasString(server.cors, origin) {
-			w.Header().Set("Access-Control-Allow-Origin", origin)
-			w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
-			w.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
-			w.WriteHeader(http.StatusOK)
-			return
-		}
-
-		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 }
