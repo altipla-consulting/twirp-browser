@@ -31,7 +31,7 @@ func WithLogrus() ServerOption {
 	}
 }
 
-func WithCORS(domain string) ServerOption {
+func EnableCORS(domain string) ServerOption {
 	return func(server *Server) {
 		server.cors = append(server.cors, domain)
 	}

@@ -84,14 +84,15 @@ func buildHandler(server *Server, method *runtime.Method) httprouter.Handle {
 
 func corsHandler(server *Server) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		if collections.HasString(server.cors, r.Host) {
-			w.Header().Set("Access-Control-Allow-Origin", r.Host)
+		origin := r.Header.Get("Origin")
+		if collections.HasString(server.cors, origin) {
+			w.Header().Set("Access-Control-Allow-Origin", origin)
 			w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
 			w.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
 			w.WriteHeader(http.StatusOK)
 			return
 		}
 
-		w.WriteHeader(http.StatusNotFound)
+		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 }
