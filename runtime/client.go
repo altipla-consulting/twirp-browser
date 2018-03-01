@@ -11,20 +11,31 @@ import (
 	"golang.org/x/net/context"
 )
 
-func ClientCall(ctx context.Context, server, serviceName, methodName string, in, out proto.Message) error {
+type ClientCaller struct {
+	Server string
+	Client *http.Client
+}
+
+type ClientOption func(clientCaller *ClientCaller)
+
+func (caller *ClientCaller) Call(ctx context.Context, serviceName, methodName string, in, out proto.Message) error {
 	serialized, err := proto.Marshal(in)
 	if err != nil {
 		return errors.Trace(err)
 	}
 
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/_/%s/%s", server, serviceName, methodName), bytes.NewReader(serialized))
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/_/%s/%s", caller.Server, serviceName, methodName), bytes.NewReader(serialized))
 	if err != nil {
 		return errors.Trace(err)
 	}
 	req.Header.Add("Content-Type", "application/protobuf")
 	req.Header.Add("Accept", "application/protobuf")
 
-	resp, err := http.DefaultClient.Do(req)
+	hc := http.DefaultClient
+	if caller.Client != nil {
+		hc = caller.Client
+	}
+	resp, err := hc.Do(req)
 	if err != nil {
 		return errors.Trace(err)
 	}

@@ -46,16 +46,26 @@ type ContactMessagesServiceClient interface {
 }
 
 type clientImplContactMessagesService struct {
-	server string
+	caller *runtime.ClientCaller
 }
 
-func NewContactMessagesServiceClient(server string) ContactMessagesServiceClient {
-	return &clientImplContactMessagesService{server}
+func NewContactMessagesServiceClient(server string, opts ...runtime.ClientOption) ContactMessagesServiceClient {
+	impClient := &clientImplContactMessagesService{
+		caller: &runtime.ClientCaller{
+			Server: server,
+		},
+	}
+
+	for _, opt := range opts {
+		opt(impClient.caller)
+	}
+
+	return impClient
 }
 
 func (impl *clientImplContactMessagesService) Foo(ctx context.Context, in *FooRequest) (out *common.Empty, err error) {
 	out = new(common.Empty)
-	if err := runtime.ClientCall(ctx, impl.server, "king.example.ContactMessagesService", "Foo", in, out); err != nil {
+	if err := impl.caller.Call(ctx, "king.example.ContactMessagesService", "Foo", in, out); err != nil {
 		return nil, err
 	}
 
@@ -64,7 +74,7 @@ func (impl *clientImplContactMessagesService) Foo(ctx context.Context, in *FooRe
 
 func (impl *clientImplContactMessagesService) Bar(ctx context.Context, in *BarRequest) (out *common.Empty, err error) {
 	out = new(common.Empty)
-	if err := runtime.ClientCall(ctx, impl.server, "king.example.ContactMessagesService", "Bar", in, out); err != nil {
+	if err := impl.caller.Call(ctx, "king.example.ContactMessagesService", "Bar", in, out); err != nil {
 		return nil, err
 	}
 

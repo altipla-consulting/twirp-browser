@@ -4,6 +4,8 @@ import (
 	"github.com/juju/errors"
 	"github.com/julienschmidt/httprouter"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/altipla-consulting/king/runtime"
 )
 
 func WithHttprouter(router *httprouter.Router) ServerOption {
@@ -28,5 +30,11 @@ func WithLogrus() ServerOption {
 				log.WithFields(log.Fields{"err": appErr.Error(), "stack": errors.ErrorStack(appErr)}).Error("call failed")
 			}
 		})
+	}
+}
+
+func HttpClient(client *http.Client) runtime.ClientOption {
+	return func(caller *runtime.ClientCaller) {
+		caller.Client = client
 	}
 }
