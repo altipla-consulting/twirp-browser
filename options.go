@@ -1,6 +1,8 @@
 package king
 
 import (
+	"net/http"
+
 	"github.com/juju/errors"
 	"github.com/julienschmidt/httprouter"
 	log "github.com/sirupsen/logrus"
