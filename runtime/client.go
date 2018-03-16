@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	"github.com/golang/protobuf/proto"
 	"github.com/juju/errors"
@@ -31,7 +32,9 @@ func (caller *ClientCaller) Call(ctx context.Context, serviceName, methodName st
 	req.Header.Add("Content-Type", "application/protobuf")
 	req.Header.Add("Accept", "application/protobuf")
 
-	hc := http.DefaultClient
+	hc := &http.Client{
+		Timeout: time.Second * 25,
+	}
 	if caller.Client != nil {
 		hc = caller.Client
 	}
