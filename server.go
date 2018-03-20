@@ -11,7 +11,6 @@ import (
 
 type Server struct {
 	router           *httprouter.Router
-	logrus           bool
 	errorMiddlewares []ErrorMiddleware
 	debug            bool
 }
