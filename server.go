@@ -1,6 +1,7 @@
 package king
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
@@ -15,7 +16,7 @@ type Server struct {
 	debug            bool
 }
 
-type ErrorMiddleware func(appErr error)
+type ErrorMiddleware func(ctx context.Context, appErr error)
 
 type ServerOption func(server *Server)
 
@@ -50,7 +51,7 @@ func buildHandler(server *Server, method *runtime.Method) httprouter.Handle {
 		if err := inCodec.Decode(r.Body, in); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			for _, m := range server.errorMiddlewares {
-				m(err)
+				m(r.Context(), err)
 			}
 			return
 		}
@@ -60,7 +61,7 @@ func buildHandler(server *Server, method *runtime.Method) httprouter.Handle {
 			w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			for _, m := range server.errorMiddlewares {
-				m(err)
+				m(r.Context(), err)
 			}
 			return
 		}
@@ -68,7 +69,7 @@ func buildHandler(server *Server, method *runtime.Method) httprouter.Handle {
 		if err := outCodec.Encode(w, out); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			for _, m := range server.errorMiddlewares {
-				m(err)
+				m(r.Context(), err)
 			}
 			return
 		}
