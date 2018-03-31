@@ -17,3 +17,8 @@ func RequestWithContext(r *http.Request) context.Context {
 func RequestFromContext(ctx context.Context) *http.Request {
 	return ctx.Value(requestKey).(*http.Request)
 }
+
+func AuthorizationFromContext(ctx context.Context) string {
+	r := RequestFromContext(ctx)
+	return r.Header.Get("Authorization")
+}
