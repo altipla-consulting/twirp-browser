@@ -55,3 +55,9 @@ func HttpClient(client *http.Client) runtime.ClientOption {
 		caller.Client = client
 	}
 }
+
+func WithAuthorization(token string) runtime.ClientOption {
+	return func(caller *runtime.ClientCaller) {
+		caller.Authorization = token
+	}
+}

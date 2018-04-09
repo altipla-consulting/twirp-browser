@@ -13,8 +13,9 @@ import (
 )
 
 type ClientCaller struct {
-	Server string
-	Client *http.Client
+	Server        string
+	Client        *http.Client
+	Authorization string
 }
 
 type ClientOption func(clientCaller *ClientCaller)
@@ -31,6 +32,7 @@ func (caller *ClientCaller) Call(ctx context.Context, serviceName, methodName st
 	}
 	req.Header.Add("Content-Type", "application/protobuf")
 	req.Header.Add("Accept", "application/protobuf")
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", caller.Authorization))
 
 	hc := &http.Client{
 		Timeout: time.Second * 25,
