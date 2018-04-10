@@ -7,6 +7,7 @@ import (
 
 	"github.com/altipla-consulting/king/peer"
 	"github.com/altipla-consulting/king/runtime"
+	"github.com/altipla-consulting/sentry"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -46,6 +47,7 @@ func buildHandler(server *Server, method *runtime.Method) httprouter.Handle {
 		w.Header().Set("Content-Type", outCodec.ContentType())
 
 		r = r.WithContext(peer.RequestWithContext(r))
+		r = r.WithContext(sentry.WithContext(r.Context()))
 
 		in := method.Input()
 		if err := inCodec.Decode(r.Body, in); err != nil {
