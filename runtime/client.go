@@ -34,8 +34,25 @@ func (caller *ClientCaller) Call(ctx context.Context, serviceName, methodName st
 	req.Header.Add("Accept", "application/protobuf")
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", caller.Authorization))
 
+	var duration time.Duration
+	if dl, ok := ctx.Deadline(); ok {
+		duration := dl.Sub(time.Now())
+		if duration > 25*time.Second {
+			ctx, cancel := context.WithDeadline(ctx, time.Now().Add(time.Second*25))
+			defer cancel()
+
+			dl, _ = ctx.Deadline()
+		}
+
+		dlout, err := dl.MarshalText()
+		if err != nil {
+			return errors.Trace(err)
+		}
+		req.Header.Add("X-King-Deadline", fmt.Sprintf("%v", dlout))
+	}
+
 	hc := &http.Client{
-		Timeout: time.Second * 25,
+		Timeout: duration,
 	}
 	if caller.Client != nil {
 		hc = caller.Client
