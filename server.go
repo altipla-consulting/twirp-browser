@@ -2,12 +2,14 @@ package king
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 
 	"github.com/altipla-consulting/king/peer"
 	"github.com/altipla-consulting/king/runtime"
 	"github.com/altipla-consulting/sentry"
+	"github.com/juju/errors"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -60,11 +62,47 @@ func buildHandler(server *Server, method *runtime.Method) httprouter.Handle {
 
 		out, err := method.Handler(r.Context(), in)
 		if err != nil {
-			w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-			http.Error(w, err.Error(), http.StatusInternalServerError)
 			for _, m := range server.errorMiddlewares {
 				m(r.Context(), err)
 			}
+
+			kingErr := &KingError{
+				Message: err.Error(),
+			}
+
+			switch {
+			case errors.IsNotFound(err):
+				kingErr.Error = ErrorTypeNotFound
+				break
+			case errors.IsUnauthorized(err):
+				kingErr.Error = ErrorTypeUnauthorized
+				break
+			case errors.IsNotImplemented(err):
+				kingErr.Error = ErrorTypeNotImplemented
+				break
+			case errors.IsBadRequest(err):
+				kingErr.Error = ErrorTypeBadRequest
+				break
+			case errors.IsForbidden(err):
+				kingErr.Error = ErrorTypeForbidden
+				break
+			default:
+				kingErr.Error = ErrorTypeInternalServerError
+				break
+			}
+
+			data, err := json.Marshal(kingErr)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				for _, m := range server.errorMiddlewares {
+					m(r.Context(), err)
+				}
+				return
+			}
+
+			w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+			http.Error(w, string(data), kingErrStatus[kingErr.Error])
+
 			return
 		}
 
