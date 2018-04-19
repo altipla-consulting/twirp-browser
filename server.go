@@ -48,8 +48,11 @@ func buildHandler(server *Server, method *runtime.Method) httprouter.Handle {
 
 		w.Header().Set("Content-Type", outCodec.ContentType())
 
-		r = r.WithContext(peer.RequestWithContext(r))
 		r = r.WithContext(sentry.WithContext(r.Context()))
+
+		// Este WithContext debe mantenerse siempre el último dado que debe guardar una petición
+		// con todos los valores ya introducidos.
+		r = r.WithContext(peer.RequestWithContext(r))
 
 		in := method.Input()
 		if err := inCodec.Decode(r.Body, in); err != nil {
