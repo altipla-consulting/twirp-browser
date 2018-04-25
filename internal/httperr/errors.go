@@ -1,4 +1,4 @@
-package king
+package httperr
 
 import (
 	"net/http"
@@ -13,7 +13,7 @@ const (
 	ErrorTypeInternalServerError = "STATUS_INTERNAL_SERVER_ERROR"
 )
 
-var kingErrStatus = map[string]int{
+var KingErrStatus = map[string]int{
 	ErrorTypeNotFound:            http.StatusNotFound,
 	ErrorTypeUnauthorized:        http.StatusUnauthorized,
 	ErrorTypeNotImplemented:      http.StatusNotImplemented,
@@ -22,16 +22,11 @@ var kingErrStatus = map[string]int{
 	ErrorTypeInternalServerError: http.StatusInternalServerError,
 }
 
-var statusKingErr = map[int]string{
+var StatusKingErr = map[int]string{
 	http.StatusNotFound:            ErrorTypeNotFound,
 	http.StatusUnauthorized:        ErrorTypeUnauthorized,
 	http.StatusNotImplemented:      ErrorTypeNotImplemented,
 	http.StatusBadRequest:          ErrorTypeBadRequest,
 	http.StatusForbidden:           ErrorTypeForbidden,
 	http.StatusInternalServerError: ErrorTypeInternalServerError,
-}
-
-type KingError struct {
-	Error   string `json:"error"`
-	Message string `json:"message"`
 }

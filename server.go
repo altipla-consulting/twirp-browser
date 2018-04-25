@@ -11,6 +11,8 @@ import (
 	"github.com/altipla-consulting/sentry"
 	"github.com/juju/errors"
 	"github.com/julienschmidt/httprouter"
+
+	"github.com/altipla-consulting/king/internal/httperr"
 )
 
 type Server struct {
@@ -69,29 +71,23 @@ func buildHandler(server *Server, method *runtime.Method) httprouter.Handle {
 				m(r.Context(), err)
 			}
 
-			kingErr := &KingError{
+			kingErr := &runtime.KingError{
 				Message: err.Error(),
 			}
 
 			switch {
 			case errors.IsNotFound(err):
-				kingErr.Error = ErrorTypeNotFound
-				break
+				kingErr.Err = httperr.ErrorTypeNotFound
 			case errors.IsUnauthorized(err):
-				kingErr.Error = ErrorTypeUnauthorized
-				break
+				kingErr.Err = httperr.ErrorTypeUnauthorized
 			case errors.IsNotImplemented(err):
-				kingErr.Error = ErrorTypeNotImplemented
-				break
+				kingErr.Err = httperr.ErrorTypeNotImplemented
 			case errors.IsBadRequest(err):
-				kingErr.Error = ErrorTypeBadRequest
-				break
+				kingErr.Err = httperr.ErrorTypeBadRequest
 			case errors.IsForbidden(err):
-				kingErr.Error = ErrorTypeForbidden
-				break
+				kingErr.Err = httperr.ErrorTypeForbidden
 			default:
-				kingErr.Error = ErrorTypeInternalServerError
-				break
+				kingErr.Err = httperr.ErrorTypeInternalServerError
 			}
 
 			data, err := json.Marshal(kingErr)
@@ -104,7 +100,7 @@ func buildHandler(server *Server, method *runtime.Method) httprouter.Handle {
 			}
 
 			w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-			http.Error(w, string(data), kingErrStatus[kingErr.Error])
+			http.Error(w, string(data), httperr.KingErrStatus[kingErr.Err])
 
 			return
 		}

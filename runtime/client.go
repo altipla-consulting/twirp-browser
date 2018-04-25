@@ -2,6 +2,7 @@ package runtime
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -10,6 +11,8 @@ import (
 	"github.com/golang/protobuf/proto"
 	"github.com/juju/errors"
 	"golang.org/x/net/context"
+
+	"github.com/altipla-consulting/king/internal/httperr"
 )
 
 type ClientCaller struct {
@@ -63,13 +66,35 @@ func (caller *ClientCaller) Call(ctx context.Context, serviceName, methodName st
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return errors.Annotatef(errors.New("unexpected status code"), "status: %s", resp.Status)
-	}
-
 	content, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return errors.Trace(err)
+	}
+
+	if _, ok := httperr.StatusKingErr[resp.StatusCode]; ok {
+		kingErr := new(KingError)
+		if err := json.Unmarshal(content, kingErr); err != nil {
+			return errors.Trace(err)
+		}
+
+		message := fmt.Sprintf("%s.%s", serviceName, methodName)
+
+		switch resp.StatusCode {
+		case http.StatusNotFound:
+			return errors.NewNotFound(kingErr, message)
+		case http.StatusUnauthorized:
+			return errors.NewUnauthorized(kingErr, message)
+		case http.StatusNotImplemented:
+			return errors.NewNotImplemented(kingErr, message)
+		case http.StatusBadRequest:
+			return errors.NewBadRequest(kingErr, message)
+		case http.StatusForbidden:
+			return errors.NewForbidden(kingErr, message)
+		}
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return errors.Annotatef(errors.New("unexpected status code"), "status: %s", resp.Status)
 	}
 
 	if err := proto.Unmarshal(content, out); err != nil {
