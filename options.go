@@ -8,6 +8,7 @@ import (
 	"github.com/juju/errors"
 	"github.com/julienschmidt/httprouter"
 	log "github.com/sirupsen/logrus"
+	"go.opencensus.io/trace"
 
 	"github.com/altipla-consulting/king/peer"
 	"github.com/altipla-consulting/king/runtime"
@@ -59,5 +60,11 @@ func HttpClient(client *http.Client) runtime.ClientOption {
 func WithAuthorization(token string) runtime.ClientOption {
 	return func(caller *runtime.ClientCaller) {
 		caller.Authorization = token
+	}
+}
+
+func WithTraceOption(traceOption trace.StartOption) ServerOption {
+	return func(server *Server) {
+		server.traceOptions = append(server.traceOptions, traceOption)
 	}
 }

@@ -10,6 +10,8 @@ import (
 
 	"github.com/golang/protobuf/proto"
 	"github.com/juju/errors"
+	"go.opencensus.io/exporter/stackdriver/propagation"
+	"go.opencensus.io/trace"
 	"golang.org/x/net/context"
 
 	"github.com/altipla-consulting/king/internal/httperr"
@@ -24,6 +26,9 @@ type ClientCaller struct {
 type ClientOption func(clientCaller *ClientCaller)
 
 func (caller *ClientCaller) Call(ctx context.Context, serviceName, methodName string, in, out proto.Message) error {
+	ctx, span := trace.StartSpan(ctx, fmt.Sprintf("%s.%s", serviceName, methodName), trace.WithSpanKind(trace.SpanKindClient))
+	defer span.End()
+
 	serialized, err := proto.Marshal(in)
 	if err != nil {
 		return errors.Trace(err)
@@ -36,6 +41,9 @@ func (caller *ClientCaller) Call(ctx context.Context, serviceName, methodName st
 	req.Header.Add("Content-Type", "application/protobuf")
 	req.Header.Add("Accept", "application/protobuf")
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", caller.Authorization))
+
+	f := new(propagation.HTTPFormat)
+	f.SpanContextToRequest(span.SpanContext(), req)
 
 	var duration time.Duration
 	if dl, ok := ctx.Deadline(); ok {

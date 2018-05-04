@@ -11,6 +11,8 @@ import (
 	"github.com/altipla-consulting/sentry"
 	"github.com/juju/errors"
 	"github.com/julienschmidt/httprouter"
+	"go.opencensus.io/exporter/stackdriver/propagation"
+	"go.opencensus.io/trace"
 
 	"github.com/altipla-consulting/king/internal/httperr"
 )
@@ -19,6 +21,7 @@ type Server struct {
 	router           *httprouter.Router
 	errorMiddlewares []ErrorMiddleware
 	debug            bool
+	traceOptions     []trace.StartOption
 }
 
 type ErrorMiddleware func(ctx context.Context, appErr error)
@@ -31,11 +34,13 @@ func NewServer(opts ...ServerOption) *Server {
 		opt(server)
 	}
 
+	server.traceOptions = append(server.traceOptions, trace.WithSpanKind(trace.SpanKindServer))
+
 	if server.router != nil {
 		for _, svc := range runtime.Services {
 			for _, method := range svc.Methods {
 				path := fmt.Sprintf("/_/%s/%s", svc.Name, method.Name)
-				server.router.POST(path, buildHandler(server, method))
+				server.router.POST(path, buildHandler(fmt.Sprintf("%s.%s", svc.Name, method.Name), server, method))
 			}
 		}
 	}
@@ -43,8 +48,16 @@ func NewServer(opts ...ServerOption) *Server {
 	return server
 }
 
-func buildHandler(server *Server, method *runtime.Method) httprouter.Handle {
+func buildHandler(name string, server *Server, method *runtime.Method) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		f := new(propagation.HTTPFormat)
+		sc, ok := f.SpanContextFromRequest(r)
+		if ok {
+			ctx, span := trace.StartSpanWithRemoteParent(r.Context(), name, sc, server.traceOptions...)
+			defer span.End()
+			r = r.WithContext(ctx)
+		}
+
 		inCodec := runtime.CodecFromType(r.Header.Get("Content-Type"))
 		outCodec := runtime.CodecFromType(r.Header.Get("Accept"))
 
