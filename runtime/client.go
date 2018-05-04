@@ -59,7 +59,7 @@ func (caller *ClientCaller) Call(ctx context.Context, serviceName, methodName st
 		if err != nil {
 			return errors.Trace(err)
 		}
-		req.Header.Add("X-King-Deadline", fmt.Sprintf("%v", dlout))
+		req.Header.Add("X-King-Deadline", fmt.Sprintf("%s", dlout))
 	}
 
 	hc := &http.Client{
