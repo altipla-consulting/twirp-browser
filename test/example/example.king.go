@@ -51,9 +51,7 @@ type clientImplContactMessagesService struct {
 
 func NewContactMessagesServiceClient(server string, opts ...runtime.ClientOption) ContactMessagesServiceClient {
 	impClient := &clientImplContactMessagesService{
-		caller: &runtime.ClientCaller{
-			Server: server,
-		},
+		caller: runtime.NewClientCaller(server),
 	}
 
 	for _, opt := range opts {
