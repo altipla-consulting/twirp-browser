@@ -56,7 +56,9 @@ func (g *generator) Generate(req *plugin.CodeGeneratorRequest) (*plugin.CodeGene
 			return nil, errors.Annotatef(err, "generating %s", name)
 		}
 
-		resp.File = append(resp.File, genFile)
+		if len(file.GetService()) > 0 {
+			resp.File = append(resp.File, genFile)
+		}
 	}
 
 	return resp, nil
