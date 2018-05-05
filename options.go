@@ -51,7 +51,7 @@ func WithSentry(dsn string) ServerOption {
 	}
 }
 
-func HttpClient(client *http.Client) runtime.ClientOption {
+func WithHttpClient(client *http.Client) runtime.ClientOption {
 	return func(caller *runtime.ClientCaller) {
 		caller.Client = client
 	}
@@ -63,8 +63,14 @@ func WithAuthorization(token string) runtime.ClientOption {
 	}
 }
 
-func WithTraceOption(traceOption trace.StartOption) ServerOption {
+func WithServerTraceOption(traceOption trace.StartOption) ServerOption {
 	return func(server *Server) {
 		server.traceOptions = append(server.traceOptions, traceOption)
+	}
+}
+
+func WithClientTraceOption(traceOption trace.StartOption) runtime.ClientOption {
+	return func(caller *runtime.ClientCaller) {
+		caller.TraceOptions = append(caller.TraceOptions, traceOption)
 	}
 }

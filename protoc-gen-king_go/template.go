@@ -135,15 +135,13 @@ type {{.ClientName}} interface {
 	{{.MethodName}}(ctx context.Context, in *{{.InType}}) (out *{{.OutType}}, err error){{end}}
 }
 
- type {{$implName}} struct {
- 	caller *runtime.ClientCaller
- }
+type {{$implName}} struct {
+	caller *runtime.ClientCaller
+}
 
 func New{{.ClientName}}(server string, opts ...runtime.ClientOption) {{.ClientName}} {
 	impClient := &{{$implName}}{
-		caller: &runtime.ClientCaller{
-			Server: server,
-		},
+		caller: runtime.NewClientCaller(server),
 	}
 
 	for _, opt := range opts {

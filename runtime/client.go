@@ -21,12 +21,22 @@ type ClientCaller struct {
 	Server        string
 	Client        *http.Client
 	Authorization string
+	TraceOptions  []trace.StartOption
 }
 
 type ClientOption func(clientCaller *ClientCaller)
 
+func NewClientCaller(server string) *ClientCaller {
+	return &ClientCaller{
+		Server: server,
+		TraceOptions: []trace.StartOption{
+			trace.WithSpanKind(trace.SpanKindClient),
+		},
+	}
+}
+
 func (caller *ClientCaller) Call(ctx context.Context, serviceName, methodName string, in, out proto.Message) error {
-	ctx, span := trace.StartSpan(ctx, fmt.Sprintf("%s.%s", serviceName, methodName), trace.WithSpanKind(trace.SpanKindClient))
+	ctx, span := trace.StartSpan(ctx, fmt.Sprintf("%s.%s", serviceName, methodName), caller.TraceOptions...)
 	defer span.End()
 
 	serialized, err := proto.Marshal(in)
