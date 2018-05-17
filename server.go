@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/altipla-consulting/king/peer"
 	"github.com/altipla-consulting/king/runtime"
@@ -64,6 +65,22 @@ func buildHandler(name string, server *Server, method *runtime.Method) httproute
 		w.Header().Set("Content-Type", outCodec.ContentType())
 
 		r = r.WithContext(sentry.WithContext(r.Context()))
+
+		header := r.Header.Get("X-King-Deadline")
+		if header != "" {
+			var deadline time.Time
+			if err := deadline.UnmarshalText([]byte(header)); err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				for _, m := range server.errorMiddlewares {
+					m(r.Context(), err)
+				}
+				return
+			}
+
+			ctx, cancel := context.WithDeadline(r.Context(), deadline)
+			defer cancel()
+			r = r.WithContext(ctx)
+		}
 
 		// Este WithContext debe mantenerse siempre el último dado que debe guardar una petición
 		// con todos los valores ya introducidos.
