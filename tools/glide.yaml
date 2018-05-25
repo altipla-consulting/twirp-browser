@@ -1,0 +1,11 @@
+package: github.com/altipla-consulting/king/tools
+import:
+- package: github.com/juju/errors
+- package: github.com/sirupsen/logrus
+  version: ^1.0.5
+- package: github.com/spf13/cobra
+  version: ^0.0.3
+- package: gopkg.in/yaml.v2
+  version: ^2.2.1
+- package: github.com/fatih/color
+  version: ^1.7.0
