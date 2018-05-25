@@ -1,5 +1,5 @@
 
-FILES = $(shell find . -type f -name '*.go' -not -path './vendor/*')
+FILES = $(shell find . -type f -name '*.go' -not -path './tools/vendor/*')
 
 .PHONY: test
 
