@@ -9,3 +9,4 @@ import:
   version: ^2.2.1
 - package: github.com/fatih/color
   version: ^1.7.0
+- package: github.com/hokaccha/go-prettyjson

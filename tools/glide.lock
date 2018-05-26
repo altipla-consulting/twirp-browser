@@ -1,12 +1,18 @@
-hash: 42ac999826213b5e4f0ace391f618265cf38f0411b70bf75e7f7b27dab677233
-updated: 2018-05-25T21:44:27.338090236Z
+hash: bb906da8b8ad7b81a1014db6f016304813c6a96f3eb071a8b7a13e66c88a8cca
+updated: 2018-05-26T11:09:39.715123376Z
 imports:
 - name: github.com/fatih/color
   version: 5b77d2a35fb0ede96d138fc9a99f5c9b6aef11b4
+- name: github.com/hokaccha/go-prettyjson
+  version: e6b9231a2b1cc5798b336fdbf99c16cd8ad1e0c9
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/juju/errors
   version: c7d06af17c68cd34c835053720b21f6549d9b0ee
+- name: github.com/mattn/go-colorable
+  version: efa589957cd060542a26d2dd7832fd6a6c6c3ade
+- name: github.com/mattn/go-isatty
+  version: 6ca4dbf54d38eea1a992b3c722a76a5d1c4cb25c
 - name: github.com/sirupsen/logrus
   version: c155da19408a8799da419ed3eeb0cb5db0ad5dbc
 - name: github.com/spf13/cobra
