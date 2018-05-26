@@ -12,7 +12,7 @@ node {
   }
 
   stage('king') {
-    sh 'king go build -o king ./tools/cmd/king'
+    sh 'actools go build -o king ./tools/cmd/king'
     ci.gsutil "-h 'Cache-Control: no-cache' cp king gs://tools.altipla.consulting/bin/king"
   }
 }
