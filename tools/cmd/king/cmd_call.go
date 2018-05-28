@@ -71,6 +71,10 @@ var CmdCall = &cobra.Command{
 		req.Header.Set("Content-Type", "application/json; charset=utf-8")
 		req.Header.Set("Accept", "application/json; charset=utf-8")
 
+		if domain.Token != "" {
+			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", domain.Token))
+		}
+
 		content, err := prettyjson.Format(reqBuf.Bytes())
 		if err != nil {
 			return errors.Trace(err)
