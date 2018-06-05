@@ -2,6 +2,7 @@ package auth
 
 import (
 	"io/ioutil"
+	"net"
 	"os"
 	"path/filepath"
 	"time"
@@ -57,8 +58,18 @@ type Domain struct {
 	LastUpdated time.Time `yaml:"last_updated"`
 }
 
-func (domain *Domain) IsLocal() bool {
-	return domain.Hostname == "localhost:8080"
+func (domain *Domain) IsLocal() (bool, error) {
+	addresses, err := net.LookupHost(domain.Hostname)
+	if err != nil {
+		return nil, errors.Trace(err)
+	}
+	for _, address := range addresses {
+		if address == "127.0.0.1" {
+			return true, nil
+		}
+	}
+
+	return false, nil
 }
 
 func ReadConfig() (*Config, error) {

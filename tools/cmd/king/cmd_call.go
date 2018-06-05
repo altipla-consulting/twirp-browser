@@ -60,7 +60,11 @@ var CmdCall = &cobra.Command{
 		kingMethod := parts[len(parts)-1]
 
 		scheme := "https"
-		if domain.IsLocal() {
+		isLocal, err := domain.IsLocal()
+		if err != nil {
+			return errors.Trace(err)
+		}
+		if isLocal {
 			scheme = "http"
 		}
 		endpoint := fmt.Sprintf("%s://%s/_/%s/%s", scheme, domain.Hostname, kingService, kingMethod)
