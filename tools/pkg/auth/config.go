@@ -61,7 +61,7 @@ type Domain struct {
 func (domain *Domain) IsLocal() (bool, error) {
 	addresses, err := net.LookupHost(domain.Hostname)
 	if err != nil {
-		return nil, errors.Trace(err)
+		return false, errors.Trace(err)
 	}
 	for _, address := range addresses {
 		if address == "127.0.0.1" {
