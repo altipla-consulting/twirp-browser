@@ -59,7 +59,12 @@ type Domain struct {
 }
 
 func (domain *Domain) IsLocal() (bool, error) {
-	addresses, err := net.LookupHost(domain.Hostname)
+	hostname, _, err := net.SplitHostPort(domain.Hostname)
+	if err != nil {
+		return false, errors.Trace(err)
+	}
+
+	addresses, err := net.LookupHost(hostname)
 	if err != nil {
 		return false, errors.Trace(err)
 	}
