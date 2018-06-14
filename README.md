@@ -1,19 +1,23 @@
 
-# king
+<p align="center">
+  <img src="https://storage.googleapis.com/altipla-external-files/logos/king.png">
+</p>
+<br>
 
-> Protobuf RPC using JSON.
 
-For the general public we recommend better public & documented projects like [Twitch Twirp](https://github.com/twitchtv/twirp) or [Improbable Engineering GRPC Web](https://github.com/improbable-eng/grpc-web).
+> **WARNING:** For the general public we recommend better public & documented projects like [Twitch Twirp](https://github.com/twitchtv/twirp) or [Improbable Engineering GRPC Web](https://github.com/improbable-eng/grpc-web).
 
 
-### Install
+### CLI helper
+
+**Install:**
 
 ```shell
 curl https://tools.altipla.consulting/bin/king > ~/bin/king && chmod +x ~/bin/king
 ```
 
 
-### Usage
+**Usage:**
 
 ```shell
 king auth api.altipla.consulting FOO_TOKEN
