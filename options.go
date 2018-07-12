@@ -43,12 +43,13 @@ func WithSentry(dsn string) ServerOption {
 	client := sentry.NewClient(dsn)
 
 	return func(server *Server) {
-		server.errorMiddlewares = append(server.errorMiddlewares, func(ctx context.Context, appError error) {
-			if !appErr.IsNotFound() {
-				r := peer.RequestFromContext(ctx)
-
-				client.ReportRequest(appError, r)
+		server.errorMiddlewares = append(server.errorMiddlewares, func(ctx context.Context, appErr error) {
+			if appErr.IsNotFound() {
+				return
 			}
+
+			r := peer.RequestFromContext(ctx)
+			client.ReportRequest(appErr, r)
 		})
 	}
 }
