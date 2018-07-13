@@ -44,7 +44,7 @@ func WithSentry(dsn string) ServerOption {
 
 	return func(server *Server) {
 		server.errorMiddlewares = append(server.errorMiddlewares, func(ctx context.Context, appErr error) {
-			if appErr.IsNotFound() {
+			if errors.IsNotFound(appErr) {
 				return
 			}
 
