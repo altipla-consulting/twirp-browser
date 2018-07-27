@@ -38,10 +38,6 @@ type templateService struct {
 	typesMap map[string]string
 }
 
-func (svc *templateService) ClientName() string {
-	return svc.proto.GetName() + "Client"
-}
-
 func (svc *templateService) ServerName() string {
 	return svc.proto.GetName() + "Server"
 }
@@ -104,6 +100,7 @@ import (
 // Source: {{.SourceFilename}}
 
 {{range .Services}}
+{{$name := .Name}}
 {{$serviceName := .ServiceName}}
 {{$implName := .ClientImplName}}
 
@@ -130,16 +127,29 @@ func Register{{.Name}}(server {{.ServerName}}) {
 	runtime.Services = append(runtime.Services, serviceDef)
 }
 
-type {{.ClientName}} interface {
+type {{.Name}}Client interface {
 	{{range .Methods}}
 	{{.MethodName}}(ctx context.Context, in *{{.InType}}) (out *{{.OutType}}, err error){{end}}
 }
 
+type {{.Name}}Mock struct {
+	{{range .Methods}}
+	{{.MethodName}}Mock func(ctx context.Context, in *{{.InType}}) (out *{{.OutType}}, err error){{end}}
+}
+{{range .Methods}}
+func (mock *{{$name}}Mock) {{.MethodName}}(ctx context.Context, in *{{.InType}}) (out *{{.OutType}}, err error) {
+	if mock.{{.MethodName}}Mock == nil {
+		panic("cannot call {{.MethodName}} without the mock")
+	}
+
+	return mock.{{.MethodName}}Mock(ctx, in)
+}
+{{end}}
 type {{$implName}} struct {
 	caller *runtime.ClientCaller
 }
 
-func New{{.ClientName}}(server string, opts ...runtime.ClientOption) {{.ClientName}} {
+func New{{.Name}}Client(server string, opts ...runtime.ClientOption) {{.Name}}Client {
 	impClient := &{{$implName}}{
 		caller: runtime.NewClientCaller(server),
 	}

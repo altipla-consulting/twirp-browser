@@ -45,6 +45,27 @@ type ContactMessagesServiceClient interface {
 	Bar(ctx context.Context, in *BarRequest) (out *common.Empty, err error)
 }
 
+type ContactMessagesServiceMock struct {
+	FooMock func(ctx context.Context, in *FooRequest) (out *common.Empty, err error)
+	BarMock func(ctx context.Context, in *BarRequest) (out *common.Empty, err error)
+}
+
+func (mock *ContactMessagesServiceMock) Foo(ctx context.Context, in *FooRequest) (out *common.Empty, err error) {
+	if mock.FooMock == nil {
+		panic("cannot call Foo without the mock")
+	}
+
+	return mock.FooMock(ctx, in)
+}
+
+func (mock *ContactMessagesServiceMock) Bar(ctx context.Context, in *BarRequest) (out *common.Empty, err error) {
+	if mock.BarMock == nil {
+		panic("cannot call Bar without the mock")
+	}
+
+	return mock.BarMock(ctx, in)
+}
+
 type clientImplContactMessagesService struct {
 	caller *runtime.ClientCaller
 }
