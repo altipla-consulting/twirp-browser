@@ -112,8 +112,8 @@ func buildHandler(name string, server *Server, method *runtime.Method) httproute
 				kingErr.Err = httperr.ErrorTypeUnauthorized
 			case errors.IsNotImplemented(err):
 				kingErr.Err = httperr.ErrorTypeNotImplemented
-			case errors.IsBadRequest(err):
-				kingErr.Err = httperr.ErrorTypeBadRequest
+			case errors.IsNotValid(err):
+				kingErr.Err = httperr.ErrorTypeNotValid
 			case errors.IsForbidden(err):
 				kingErr.Err = httperr.ErrorTypeForbidden
 			default:
