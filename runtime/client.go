@@ -105,7 +105,7 @@ func (caller *ClientCaller) Call(ctx context.Context, serviceName, methodName st
 		case http.StatusNotImplemented:
 			return errors.NewNotImplemented(kingErr, message)
 		case http.StatusBadRequest:
-			return errors.NewBadRequest(kingErr, message)
+			return errors.NewNotValid(kingErr, message)
 		case http.StatusForbidden:
 			return errors.NewForbidden(kingErr, message)
 		}
