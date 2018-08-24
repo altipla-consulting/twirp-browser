@@ -8,7 +8,7 @@ const (
 	ErrorTypeNotFound            = "NOT_FOUND"
 	ErrorTypeUnauthorized        = "UNAUTHORIZED"
 	ErrorTypeNotImplemented      = "NOT_IMPLEMENTED"
-	ErrorTypeNotValid            = "BAD_REQUEST"
+	ErrorTypeNotValid            = "NOT_VALID"
 	ErrorTypeForbidden           = "STATUS_FORBIDDEN"
 	ErrorTypeInternalServerError = "STATUS_INTERNAL_SERVER_ERROR"
 )
